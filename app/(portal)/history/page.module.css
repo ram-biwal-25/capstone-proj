@@ -3,110 +3,318 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 28px;
+  margin-bottom: 25px;
 }
 
 .headingRow h1 {
   margin: 0;
-  font-size: clamp(2rem, 6vw, 2.8rem);
+  font-size: clamp(2.15rem, 4vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
 }
 
 .headingRow p:last-child {
-  margin: 7px 0 0;
+  max-width: 620px;
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.headingRow > a {
+  flex: 0 0 auto;
+  gap: 5px;
 }
 
 .eyebrow {
-  margin: 0 0 4px;
+  margin: 0 0 6px;
   color: var(--primary);
-  font-size: 0.82rem;
+  font-size: 0.73rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
-.historyList {
-  display: grid;
-  gap: 14px;
+.tableShell {
+  overflow: hidden;
 }
 
-.historyCard {
+.tableShell table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableShell th,
+.tableShell td {
+  padding: 15px 17px;
+  text-align: left;
+}
+
+.tableShell th {
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  background: #f7f6f1;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.tableShell td {
+  color: #555d57;
+  font-size: 0.82rem;
+}
+
+.tableShell tbody tr + tr td {
+  border-top: 1px solid var(--border);
+}
+
+.tableShell tbody tr:hover td {
+  background: #fbfcf8;
+}
+
+.tableShell td:first-child {
+  min-width: 255px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 21px;
+  gap: 11px;
+}
+
+.farmGlyph {
+  width: 39px;
+  height: 39px;
+  display: grid;
+  flex: 0 0 39px;
+  place-items: center;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+.pig {
+  color: #875a47;
+  background: #f4e5dc;
+}
+
+.poultry {
+  color: #7c5a12;
+  background: #f3eacb;
+}
+
+.farmName {
+  min-width: 0;
+  display: grid;
+}
+
+.farmName strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.86rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.farmName small {
+  color: var(--muted);
+  font-size: 0.69rem;
+}
+
+.completion {
+  color: var(--primary);
+  font-weight: 820;
+}
+
+.followUp,
+.clear {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 0.7rem;
+  font-weight: 760;
+}
+
+.followUp {
+  color: #7a510f;
+  background: var(--warning-bg);
+}
+
+.clear {
+  color: #346047;
+  background: var(--success-bg);
+}
+
+.openLink {
+  min-width: 58px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  color: var(--primary);
+  font-size: 0.76rem;
+  font-weight: 780;
   text-decoration: none;
-  transition: border-color 0.15s, transform 0.15s;
 }
 
-.historyCard:hover {
-  border-color: var(--primary);
-  transform: translateY(-1px);
-}
-
-.historyCard h2 {
-  margin: 7px 0 3px;
+.openLink b {
   font-size: 1.15rem;
 }
 
-.historyCard p {
-  margin: 0;
-}
-
-.farmType {
-  color: var(--primary);
-  font-size: 0.79rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.cardSummary {
-  min-width: 135px;
-  display: grid;
-  text-align: right;
-}
-
-.cardSummary strong {
-  color: var(--primary);
-  font-size: 1.5rem;
-}
-
-.cardSummary span,
-.cardSummary small {
-  color: var(--muted);
-}
-
 .empty {
-  padding: 38px;
+  display: grid;
+  justify-items: center;
+  padding: 54px 25px;
   text-align: center;
 }
 
+.emptyIcon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  color: #7b867f;
+  background: #ecefe9;
+}
+
+.emptyIcon svg {
+  width: 29px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
 .empty h2 {
-  margin: 0;
+  margin: 15px 0 2px;
+  font-size: 1.15rem;
 }
 
-.empty .button {
-  margin-top: 12px;
+.empty p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 0.84rem;
 }
 
-@media (max-width: 600px) {
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .tableShell th,
+  .tableShell td {
+    padding-inline: 12px;
+  }
+
+  .tableShell td:first-child {
+    min-width: 210px;
+  }
+}
+
+@media (max-width: 720px) {
   .headingRow {
     align-items: stretch;
     flex-direction: column;
+    margin-bottom: 20px;
   }
 
-  .historyCard {
-    align-items: flex-start;
-    flex-direction: column;
+  .eyebrow {
+    display: none;
   }
 
-  .cardSummary {
-    width: 100%;
-    grid-template-columns: auto 1fr auto;
-    align-items: baseline;
-    gap: 8px;
-    border-top: 1px solid var(--border);
-    padding-top: 12px;
-    text-align: left;
+  .headingRow h1 {
+    font-size: 2rem;
+  }
+
+  .headingRow p:last-child {
+    font-size: 0.83rem;
+  }
+
+  .headingRow > a {
+    align-self: flex-start;
+  }
+
+  .tableShell {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .tableShell table,
+  .tableShell tbody {
+    display: block;
+  }
+
+  .tableShell thead {
+    display: none;
+  }
+
+  .tableShell tbody {
+    display: grid;
+    gap: 12px;
+  }
+
+  .tableShell tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 15px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .tableShell td,
+  .tableShell td:first-child {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    border: 0 !important;
+    padding: 0;
+    background: transparent !important;
+  }
+
+  .tableShell td:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .tableShell td:nth-child(2) {
+    grid-column: 1;
+    color: var(--muted);
+    font-size: 0.74rem;
+  }
+
+  .tableShell td:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: flex-end;
+  }
+
+  .tableShell td:nth-child(4) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .tableShell td:last-child {
+    grid-column: 2;
+    grid-row: 3;
+    justify-content: flex-end;
+  }
+
+  .openLink {
+    min-width: 48px;
+    min-height: 44px;
+  }
+
+  .farmName strong {
+    font-size: 0.84rem;
   }
 }
