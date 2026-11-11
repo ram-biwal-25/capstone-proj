@@ -24,7 +24,7 @@ export function findUserById(id: string): PortalUser | null {
 }
 
 export function listAccessibleFarms(userId: string): Farm[] {
-  return db
+  const rows = db
     .prepare(
       `SELECT farms.id, farms.name, farms.type, farm_access.role AS accessRole
        FROM farms
@@ -33,6 +33,13 @@ export function listAccessibleFarms(userId: string): Farm[] {
        ORDER BY farms.name`,
     )
     .all(userId) as Farm[];
+
+  return rows.map((farm) => ({
+    id: farm.id,
+    name: farm.name,
+    type: farm.type,
+    accessRole: farm.accessRole,
+  }));
 }
 
 export function canAccessFarm(userId: string, farmId: string) {
@@ -88,14 +95,9 @@ export function createAssessment(input: {
   responses: AssessmentResponse[];
   submissionKey: string;
 }) {
-  const existing = db
-    .prepare("SELECT id FROM assessments WHERE submission_key = ? AND user_id = ?")
-    .get(input.submissionKey, input.userId) as { id: string } | undefined;
-  if (existing) return { id: existing.id, created: false };
-
   const id = randomUUID();
-  db.prepare(
-    `INSERT INTO assessments
+  const result = db.prepare(
+    `INSERT OR IGNORE INTO assessments
       (id, farm_id, user_id, assessed_on, responses_json, submission_key, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
   ).run(
@@ -107,7 +109,13 @@ export function createAssessment(input: {
     input.submissionKey,
     new Date().toISOString(),
   );
-  return { id, created: true };
+
+  const saved = db
+    .prepare("SELECT id FROM assessments WHERE submission_key = ? AND user_id = ?")
+    .get(input.submissionKey, input.userId) as { id: string } | undefined;
+  if (!saved) throw new Error("Submission key already belongs to a different user.");
+
+  return { id: saved.id, created: result.changes === 1 };
 }
 
 export function listAssessments(userId: string): Assessment[] {
