@@ -121,9 +121,9 @@ export function createAssessment(input: {
 export function listAssessments(userId: string): Assessment[] {
   const rows = db
     .prepare(
-      `${assessmentSelect}
+       `${assessmentSelect}
        WHERE farm_access.user_id = ?
-       ORDER BY assessments.created_at DESC`,
+       ORDER BY assessments.assessed_on DESC, assessments.created_at DESC`,
     )
     .all(userId) as AssessmentRow[];
   return rows.map(mapAssessment);
