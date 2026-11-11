@@ -30,15 +30,15 @@ export default async function AssessmentDetailPage({
     <section>
       {saved ? <div className={styles.success} role="status">Assessment saved successfully.</div> : null}
       <Link className={styles.backLink} href="/history">← Assessment History</Link>
-      <div className={styles.heading}>
+      <div className={`card ${styles.heading}`}>
         <div>
-          <p className={styles.eyebrow}>Saved internal self-assessment</p>
+          <p className={styles.eyebrow}>Assessment record</p>
           <h1>{assessment.farmName}</h1>
           <p className="muted">
             {assessment.farmType === "pig" ? "Pig farm" : "Poultry farm"} · Assessed {formatDate(assessment.assessedOn)}
           </p>
         </div>
-        <div className={`card ${styles.score}`}>
+        <div className={styles.score}>
           <strong>{summary.percentage === null ? "N/A" : `${summary.percentage}%`}</strong>
           <span>Checklist completion</span>
         </div>
@@ -70,6 +70,7 @@ export default async function AssessmentDetailPage({
       </div>
 
       <footer className={styles.recordFooter}>
+        <span>Internal self-assessment</span>
         Recorded by {assessment.createdBy} on {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(assessment.createdAt))}
       </footer>
     </section>

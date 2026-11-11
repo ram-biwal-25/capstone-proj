@@ -1,95 +1,118 @@
 .success {
-  margin-bottom: 20px;
-  border: 1px solid #8cc49c;
-  border-radius: 10px;
+  margin-bottom: 18px;
+  border: 1px solid #a7c9ae;
+  border-radius: 14px;
   padding: 12px 15px;
   color: #17552b;
   background: var(--success-bg);
-  font-weight: 800;
+  font-size: 0.84rem;
+  font-weight: 780;
 }
 
 .backLink {
-  display: inline-block;
-  margin-bottom: 15px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 9px;
   color: var(--primary);
-  font-weight: 800;
+  font-size: 0.82rem;
+  font-weight: 780;
   text-decoration: none;
 }
 
 .heading {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 25px;
+  gap: 28px;
+  padding: 25px 27px;
+  background: linear-gradient(125deg, rgba(255, 254, 250, 0.96), rgba(236, 242, 232, 0.92));
 }
 
 .heading h1 {
   margin: 0;
-  font-size: clamp(1.9rem, 6vw, 2.7rem);
+  font-size: clamp(1.8rem, 4vw, 2.55rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
 }
 
 .heading p:last-child {
   margin: 7px 0 0;
+  font-size: 0.84rem;
 }
 
 .eyebrow {
-  margin: 0 0 5px;
+  margin: 0 0 6px;
   color: var(--primary);
-  font-size: 0.79rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-size: 0.69rem;
+  font-weight: 820;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .score {
-  min-width: 185px;
+  min-width: 174px;
   display: grid;
-  padding: 18px;
+  border: 1px solid rgba(29, 81, 56, 0.13);
+  border-radius: 17px;
+  padding: 17px 20px;
+  background: rgba(255, 255, 255, 0.65);
   text-align: center;
 }
 
 .score strong {
   color: var(--primary);
   font-size: 2rem;
+  letter-spacing: -0.04em;
 }
 
 .score span {
   color: var(--muted);
-  font-size: 0.88rem;
-  font-weight: 700;
+  font-size: 0.71rem;
+  font-weight: 720;
 }
 
 .naMessage {
-  border-radius: 9px;
+  border: 1px solid #ead5a9;
+  border-radius: 13px;
   padding: 11px 14px;
   background: var(--warning-bg);
+  font-size: 0.8rem;
 }
 
 .counts {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 24px 0 18px;
+  gap: 9px;
+  margin: 19px 0;
 }
 
 .counts span {
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 7px 12px;
-  background: #e8eee9;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 0.77rem;
+}
+
+.counts strong {
+  margin-right: 3px;
+  color: var(--text);
 }
 
 .responses {
   display: grid;
-  gap: 13px;
+  gap: 12px;
 }
 
 .responseCard {
-  padding: 20px;
+  padding: 19px 20px;
 }
 
 .responseHeading {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 18px;
 }
@@ -97,28 +120,29 @@
 .responseHeading h2 {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 0.96rem;
+  letter-spacing: -0.015em;
 }
 
 .responseHeading h2 span {
-  flex: 0 0 27px;
-  width: 27px;
-  height: 27px;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  color: white;
-  background: var(--primary);
-  font-size: 0.78rem;
+  border-radius: 9px;
+  color: var(--primary);
+  background: var(--sage);
+  font-size: 0.72rem;
 }
 
 .responseHeading > strong {
   flex: 0 0 auto;
   border-radius: 999px;
   padding: 5px 10px;
-  font-size: 0.82rem;
+  font-size: 0.71rem;
 }
 
 .done {
@@ -137,44 +161,77 @@
 }
 
 .note {
-  margin: 15px 0 0 36px;
-  border-left: 3px solid var(--border);
+  margin: 13px 0 0 38px;
+  border-left: 2px solid #d8ded8;
   padding-left: 12px;
 }
 
 .note span {
   color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 800;
+  font-size: 0.65rem;
+  font-weight: 820;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .note p {
   margin: 2px 0 0;
+  color: #414943;
+  font-size: 0.82rem;
 }
 
 .recordFooter {
-  margin-top: 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 20px;
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 0.72rem;
+}
+
+.recordFooter span {
+  color: var(--primary);
+  font-weight: 750;
 }
 
 @media (max-width: 620px) {
-  .heading,
-  .responseHeading {
+  .heading {
     align-items: stretch;
     flex-direction: column;
+    border-radius: 18px;
+    padding: 20px;
+  }
+
+  .heading h1 {
+    font-size: 1.7rem;
   }
 
   .score {
     min-width: 0;
   }
 
+  .responseCard {
+    border-radius: 18px;
+    padding: 17px 15px;
+  }
+
+  .responseHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .responseHeading > strong {
     align-self: flex-start;
+    margin-left: 38px;
   }
 
   .note {
     margin-left: 0;
+  }
+
+  .recordFooter {
+    flex-direction: column;
+    gap: 3px;
   }
 }
