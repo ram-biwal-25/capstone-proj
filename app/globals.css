@@ -123,6 +123,11 @@ textarea {
   font-weight: 700;
 }
 
+.login-form {
+  display: grid;
+  gap: 18px;
+}
+
 @media (max-width: 620px) {
   .container {
     width: min(100% - 24px, 980px);
