@@ -53,6 +53,7 @@ export default async function DashboardPage() {
           <article className={`card ${styles.farmCard}`} key={farm.id}>
             <div className={styles.farmImage}>
               <Image
+                className={farm.type === "poultry" ? styles.poultryImage : undefined}
                 alt={`${farm.type === "pig" ? "Pigs" : "Chickens"} at ${farm.name}`}
                 fill
                 priority
@@ -66,7 +67,8 @@ export default async function DashboardPage() {
                 <h3>{farm.name}</h3>
                 <p><span>{farm.accessRole}</span> access</p>
               </div>
-              <Link aria-label={`Start checklist for ${farm.name}`} href={`/checklist?farm=${farm.id}`}>
+              <Link className={styles.farmAction} href={`/checklist?farm=${farm.id}`}>
+                <span>Start checklist</span>
                 <span aria-hidden="true">→</span>
               </Link>
             </div>
@@ -104,7 +106,9 @@ export default async function DashboardPage() {
                   <strong>{assessment.farmName}</strong>
                   <small>{formatDate(assessment.assessedOn)} · {assessment.createdBy}</small>
                 </span>
-                <span className={styles.historyFollowUp}>{summary.followUp} follow-up</span>
+                <span className={summary.followUp > 0 ? styles.historyFollowUp : styles.historyClear}>
+                  {summary.followUp} follow-up
+                </span>
                 <span className={styles.historyScore}>{summary.percentage === null ? "N/A" : `${summary.percentage}%`}</span>
                 <span className={styles.rowArrow} aria-hidden="true">›</span>
               </Link>
