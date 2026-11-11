@@ -1,0 +1,64 @@
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3rem);
+  line-height: 1.15;
+}
+
+.intro {
+  max-width: 680px;
+  margin: 14px 0 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 28px 0 42px;
+}
+
+.sectionTitle {
+  margin-bottom: 14px;
+}
+
+.farmGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.farmCard {
+  padding: 22px;
+}
+
+.farmCard h3 {
+  margin: 8px 0 5px;
+}
+
+.farmCard p {
+  margin: 0;
+}
+
+.farmType {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 4px 9px;
+  color: var(--primary);
+  background: var(--success-bg);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+@media (max-width: 480px) {
+  .actions {
+    display: grid;
+  }
+}
