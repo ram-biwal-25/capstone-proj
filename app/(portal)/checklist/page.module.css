@@ -1,97 +1,222 @@
+.pageHeading {
+  margin-bottom: 26px;
+}
+
 .eyebrow {
-  margin: 0 0 5px;
+  margin: 0 0 6px;
   color: var(--primary);
-  font-size: 0.82rem;
+  font-size: 0.73rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
 .title {
   margin: 0;
-  font-size: clamp(2rem, 6vw, 2.8rem);
-  line-height: 1.15;
+  font-size: clamp(2.15rem, 4vw, 3rem);
+  line-height: 1.06;
+  letter-spacing: -0.05em;
 }
 
 .intro {
-  max-width: 700px;
-  margin: 12px 0 28px;
+  max-width: 650px;
+  margin: 10px 0 0;
+  font-size: 0.94rem;
+}
+
+.form {
+  padding-bottom: 10px;
 }
 
 .detailsCard {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 20px;
-  padding: 22px;
+  padding: 20px;
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 3px 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.progressRow > div {
+  height: 5px;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dfe3dd;
+}
+
+.progressRow i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+  transition: width 180ms ease;
 }
 
 .items {
   display: grid;
+  gap: 31px;
+  margin-top: 26px;
+}
+
+.itemSection {
+  display: grid;
+  gap: 12px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 16px;
-  margin-top: 18px;
+  padding: 0 3px;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 1.18rem;
+  letter-spacing: -0.025em;
+}
+
+.sectionHeader p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.sectionHeader > span {
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: var(--primary);
+  background: var(--sage);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.sectionItems {
+  display: grid;
+  gap: 13px;
 }
 
 .itemCard {
   min-width: 0;
   margin: 0;
-  padding: 20px 22px 22px;
+  padding: 19px 20px 20px;
 }
 
 .itemCard legend {
-  padding: 0 7px 0 0;
-  font-size: 1.08rem;
-  font-weight: 800;
+  padding: 0 9px 0 0;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 790;
 }
 
 .itemCard legend span {
   display: inline-grid;
-  width: 28px;
-  height: 28px;
+  width: 27px;
+  height: 27px;
   place-items: center;
-  margin-right: 5px;
-  border-radius: 50%;
-  color: white;
-  background: var(--primary);
-  font-size: 0.84rem;
+  margin-right: 6px;
+  border-radius: 9px;
+  color: var(--primary);
+  background: var(--sage);
+  font-size: 0.75rem;
 }
 
 .itemCard > p {
-  margin: 3px 0 15px;
+  margin: 4px 0 14px 35px;
+  font-size: 0.81rem;
 }
 
 .statusGroup {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 9px;
-  margin-bottom: 18px;
+  margin-bottom: 17px;
 }
 
-.statusGroup label {
+.statusOption {
+  position: relative;
+  min-height: 47px;
   display: flex;
-  min-height: 46px;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  border: 1px solid #b9c6bc;
-  border-radius: 9px;
+  gap: 7px;
+  border: 1px solid #cdd1cc;
+  border-radius: 13px;
   padding: 8px;
-  font-weight: 700;
+  color: #59605b;
+  background: #fff;
+  font-size: 0.83rem;
+  font-weight: 720;
   text-align: center;
   cursor: pointer;
+  transition: border-color 150ms, background 150ms, color 150ms, box-shadow 150ms;
 }
 
-.statusGroup input {
+.statusOption:hover {
+  border-color: #9caaa0;
+  background: #fafbf8;
+}
+
+.statusOption input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.statusOption:has(input:focus-visible) {
+  outline: 3px solid rgba(29, 81, 56, 0.28);
+  outline-offset: 2px;
+}
+
+.statusDot {
   width: 18px;
-  min-height: 18px;
-  margin: 0;
-  accent-color: var(--primary);
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #aeb7b1;
+  border-radius: 50%;
+  font-size: 0.67rem;
 }
 
-.statusGroup .selectedStatus {
-  border-color: var(--primary);
-  color: var(--primary-dark);
-  background: var(--success-bg);
-  box-shadow: inset 0 0 0 1px var(--primary);
+.statusOption.selectedStatus {
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+.done.selectedStatus {
+  border-color: #4e8a65;
+  color: #185031;
+  background: #e7f2e8;
+}
+
+.follow_up.selectedStatus {
+  border-color: #d3a54f;
+  color: #784c08;
+  background: #fff4d9;
+}
+
+.not_applicable.selectedStatus {
+  border-color: #9ba49e;
+  color: #4f5651;
+  background: #ecefeb;
+}
+
+.selectedStatus .statusDot {
+  border-color: currentColor;
+  color: white;
+  background: currentColor;
 }
 
 .summary {
@@ -99,30 +224,35 @@
   align-items: center;
   justify-content: space-between;
   gap: 25px;
-  margin-top: 18px;
+  margin-top: 25px;
   padding: 22px;
+  background: linear-gradient(120deg, rgba(255, 254, 250, 0.95), rgba(237, 243, 233, 0.9));
 }
 
 .summary p {
-  margin: 4px 0 0;
-  max-width: 440px;
+  margin: 3px 0 0;
+  max-width: 420px;
+  font-size: 0.8rem;
 }
 
 .summaryLabel {
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.7rem !important;
   font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .percentage {
+  color: var(--primary);
   font-size: 2rem;
+  letter-spacing: -0.04em;
 }
 
 .summary dl {
   display: grid;
   grid-template-columns: repeat(3, auto);
-  gap: 20px;
+  gap: 25px;
   margin: 0;
 }
 
@@ -133,18 +263,22 @@
 
 .summary dt {
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.72rem;
 }
 
 .summary dd {
   order: -1;
   margin: 0;
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   font-weight: 800;
 }
 
 .formError {
-  margin: 18px 0 0;
+  border: 1px solid #e2bcbc;
+  border-radius: 13px;
+  margin: 17px 0 0;
+  padding: 11px 13px;
+  background: #fff1f0;
 }
 
 .saveRow {
@@ -157,33 +291,102 @@
 
 .saveRow p {
   margin-right: auto;
+  font-size: 0.78rem;
 }
 
 .empty {
   padding: 25px;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 760px) {
+  .pageHeading {
+    margin-bottom: 20px;
+  }
+
+  .eyebrow {
+    display: none;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .intro {
+    font-size: 0.86rem;
+  }
+
   .detailsCard,
   .statusGroup {
     grid-template-columns: 1fr;
   }
 
+  .detailsCard {
+    gap: 14px;
+    border-radius: 18px;
+    padding: 16px;
+  }
+
+  .items {
+    gap: 27px;
+  }
+
+  .sectionHeader p {
+    display: none;
+  }
+
+  .itemCard {
+    border-radius: 18px;
+    padding: 17px 15px 16px;
+  }
+
+  .itemCard > p {
+    margin-left: 0;
+  }
+
+  .statusGroup {
+    gap: 7px;
+  }
+
+  .statusOption {
+    min-height: 48px;
+    justify-content: flex-start;
+    padding-inline: 13px;
+  }
+
   .summary {
     align-items: stretch;
     flex-direction: column;
+    border-radius: 18px;
   }
 
   .summary dl {
     grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .summary dl div {
+    border-radius: 12px;
+    padding: 8px 4px;
+    background: rgba(255, 255, 255, 0.55);
   }
 
   .saveRow {
+    position: sticky;
+    bottom: calc(83px + env(safe-area-inset-bottom));
+    z-index: 12;
     align-items: stretch;
     flex-direction: column;
+    gap: 8px;
+    border: 1px solid rgba(28, 33, 30, 0.09);
+    border-radius: 18px;
+    margin: 18px -4px 0;
+    padding: 10px;
+    background: rgba(250, 249, 245, 0.91);
+    box-shadow: 0 10px 30px rgba(28, 48, 35, 0.12);
+    backdrop-filter: blur(18px);
   }
 
   .saveRow p {
-    margin: 0;
+    display: none;
   }
 }
