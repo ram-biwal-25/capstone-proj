@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./portal.module.css";
 
-type IconName = "overview" | "checklist" | "history";
+type IconName = "overview" | "checklist" | "history" | "about";
 
 const links: { href: string; label: string; icon: IconName }[] = [
   { href: "/dashboard", label: "Overview", icon: "overview" },
   { href: "/checklist", label: "New checklist", icon: "checklist" },
   { href: "/history", label: "Assessment history", icon: "history" },
+  { href: "/about", label: "About", icon: "about" },
 ];
 
 function NavIcon({ name }: { name: IconName }) {
@@ -24,6 +25,14 @@ function NavIcon({ name }: { name: IconName }) {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 4v16M4 12h16" />
+      </svg>
+    );
+  }
+  if (name === "about") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="8.5" />
+        <path d="M12 10.7v5M12 7.8h.01" />
       </svg>
     );
   }
@@ -69,7 +78,7 @@ export function MobileNavigation() {
           key={link.href}
         >
           <NavIcon name={link.icon} />
-          <span>{link.icon === "checklist" ? "Checklist" : link.icon === "history" ? "History" : "Overview"}</span>
+          <span>{link.icon === "checklist" ? "Checklist" : link.icon === "history" ? "History" : link.icon === "about" ? "About" : "Overview"}</span>
         </Link>
       ))}
     </nav>

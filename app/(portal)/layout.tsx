@@ -24,16 +24,6 @@ export default async function PortalLayout({ children }: { children: React.React
           <span>FarmWard</span>
         </Link>
         <DesktopNavigation />
-        <details className={styles.projectInfo} open>
-          <summary>About this project</summary>
-          <p><strong>FarmWard</strong> is a Digital Farm Management Portal for implementing biosecurity measures in pig and poultry farms.</p>
-          <ul>
-            <li>Select a farm you are authorised to access.</li>
-            <li>Complete an internal checklist with notes and follow-up items.</li>
-            <li>Save and reopen assessment history for each farm.</li>
-          </ul>
-          <span>Sample records are for demonstration only. This feature does not make official compliance decisions or publish outbreak notices.</span>
-        </details>
         <div className={styles.sidebarAccount}>
           <div className={styles.avatar} aria-hidden="true">{user.name.charAt(0)}</div>
           <div className={styles.accountText}>
