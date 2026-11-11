@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Farm Biosecurity Portal",
+  title: "FarmWard",
   description: "Internal farm biosecurity self-assessments",
 };
 

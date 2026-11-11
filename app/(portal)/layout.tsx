@@ -5,10 +5,10 @@ import styles from "./portal.module.css";
 
 function BrandMark() {
   return (
-    <svg viewBox="0 0 40 40" aria-hidden="true">
-      <path d="M20 3.5 34 9v9.8c0 8.4-5.4 14.4-14 17.7C11.4 33.2 6 27.2 6 18.8V9z" />
-      <path d="M14 24c7.2.7 11.5-3.4 13.2-10-6.5.3-11.6 2.3-13.2 10Z" />
-      <path d="M13.5 27c2.7-4.2 6.2-6.7 10.3-8.1" />
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path fill="#1D5138" d="M16 2 28 7v8c0 7-5 12-12 15C9 27 4 22 4 15V7z" />
+      <path fill="#FFF7E7" d="M9 22c0-8 6-11 14-12 0 8-5 13-12 13l-2 2-1-1z" />
+      <path fill="none" stroke="#1D5138" strokeWidth="1.6" strokeLinecap="round" d="M10 22c3-3 6-5 10-8" />
     </svg>
   );
 }
@@ -21,7 +21,7 @@ export default async function PortalLayout({ children }: { children: React.React
       <aside className={styles.sidebar}>
         <Link className={styles.brand} href="/dashboard">
           <BrandMark />
-          <span>BioFarm Portal</span>
+          <span>FarmWard</span>
         </Link>
         <DesktopNavigation />
         <div className={styles.sidebarAccount}>
@@ -43,7 +43,7 @@ export default async function PortalLayout({ children }: { children: React.React
       <header className={styles.mobileHeader}>
         <Link className={styles.mobileBrand} href="/dashboard">
           <BrandMark />
-          <span>BioFarm Portal</span>
+          <span>FarmWard</span>
         </Link>
         <form action="/api/auth/logout" method="post">
           <button type="submit" aria-label={`Sign out ${user.name}`} title="Sign out">
