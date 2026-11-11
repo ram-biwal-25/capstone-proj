@@ -1,8 +1,9 @@
 import "server-only";
 
+import { randomUUID } from "node:crypto";
 import { db } from "./database";
 import { verifyPassword } from "./password";
-import type { Farm, PortalUser } from "./types";
+import type { Assessment, AssessmentResponse, Farm, FarmType, PortalUser } from "./types";
 
 type UserRow = PortalUser & { password_hash?: string };
 
@@ -39,4 +40,93 @@ export function canAccessFarm(userId: string, farmId: string) {
     .prepare("SELECT 1 AS allowed FROM farm_access WHERE user_id = ? AND farm_id = ?")
     .get(userId, farmId) as { allowed: number } | undefined;
   return Boolean(row);
+}
+
+type AssessmentRow = {
+  id: string;
+  farmId: string;
+  farmName: string;
+  farmType: FarmType;
+  assessedOn: string;
+  responsesJson: string;
+  createdAt: string;
+  createdBy: string;
+};
+
+function mapAssessment(row: AssessmentRow): Assessment {
+  return {
+    id: row.id,
+    farmId: row.farmId,
+    farmName: row.farmName,
+    farmType: row.farmType,
+    assessedOn: row.assessedOn,
+    responses: JSON.parse(row.responsesJson) as AssessmentResponse[],
+    createdAt: row.createdAt,
+    createdBy: row.createdBy,
+  };
+}
+
+const assessmentSelect = `
+  SELECT assessments.id,
+         assessments.farm_id AS farmId,
+         farms.name AS farmName,
+         farms.type AS farmType,
+         assessments.assessed_on AS assessedOn,
+         assessments.responses_json AS responsesJson,
+         assessments.created_at AS createdAt,
+         users.name AS createdBy
+  FROM assessments
+  INNER JOIN farms ON farms.id = assessments.farm_id
+  INNER JOIN users ON users.id = assessments.user_id
+  INNER JOIN farm_access ON farm_access.farm_id = assessments.farm_id
+`;
+
+export function createAssessment(input: {
+  userId: string;
+  farmId: string;
+  assessedOn: string;
+  responses: AssessmentResponse[];
+  submissionKey: string;
+}) {
+  const existing = db
+    .prepare("SELECT id FROM assessments WHERE submission_key = ? AND user_id = ?")
+    .get(input.submissionKey, input.userId) as { id: string } | undefined;
+  if (existing) return { id: existing.id, created: false };
+
+  const id = randomUUID();
+  db.prepare(
+    `INSERT INTO assessments
+      (id, farm_id, user_id, assessed_on, responses_json, submission_key, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    id,
+    input.farmId,
+    input.userId,
+    input.assessedOn,
+    JSON.stringify(input.responses),
+    input.submissionKey,
+    new Date().toISOString(),
+  );
+  return { id, created: true };
+}
+
+export function listAssessments(userId: string): Assessment[] {
+  const rows = db
+    .prepare(
+      `${assessmentSelect}
+       WHERE farm_access.user_id = ?
+       ORDER BY assessments.created_at DESC`,
+    )
+    .all(userId) as AssessmentRow[];
+  return rows.map(mapAssessment);
+}
+
+export function findAssessmentById(userId: string, assessmentId: string): Assessment | null {
+  const row = db
+    .prepare(
+      `${assessmentSelect}
+       WHERE farm_access.user_id = ? AND assessments.id = ?`,
+    )
+    .get(userId, assessmentId) as AssessmentRow | undefined;
+  return row ? mapAssessment(row) : null;
 }
