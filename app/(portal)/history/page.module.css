@@ -1,0 +1,112 @@
+.headingRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.headingRow h1 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+}
+
+.headingRow p:last-child {
+  margin: 7px 0 0;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.historyList {
+  display: grid;
+  gap: 14px;
+}
+
+.historyCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 21px;
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.historyCard:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.historyCard h2 {
+  margin: 7px 0 3px;
+  font-size: 1.15rem;
+}
+
+.historyCard p {
+  margin: 0;
+}
+
+.farmType {
+  color: var(--primary);
+  font-size: 0.79rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.cardSummary {
+  min-width: 135px;
+  display: grid;
+  text-align: right;
+}
+
+.cardSummary strong {
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+
+.cardSummary span,
+.cardSummary small {
+  color: var(--muted);
+}
+
+.empty {
+  padding: 38px;
+  text-align: center;
+}
+
+.empty h2 {
+  margin: 0;
+}
+
+.empty .button {
+  margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+  .headingRow {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .historyCard {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cardSummary {
+    width: 100%;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    text-align: left;
+  }
+}
