@@ -8,15 +8,33 @@ import styles from "./page.module.css";
 
 type DraftResponse = { status?: ChecklistStatus; note: string };
 
+const CHECKLIST_SECTIONS = [
+  {
+    title: "Records and traceability",
+    description: "Confirm that people and shared equipment can be traced.",
+    itemIds: ["visitor_log", "equipment_cleaning"],
+  },
+  {
+    title: "Farm controls",
+    description: "Review the controls that reduce entry and feed-related risks.",
+    itemIds: ["entry_controls", "feed_water"],
+  },
+  {
+    title: "Animal monitoring",
+    description: "Check that health and mortality observations are current.",
+    itemIds: ["animal_health", "mortality_disposal"],
+  },
+] as const;
+
 function todayForInput() {
   const now = new Date();
   return new Date(now.getTime() - now.getTimezoneOffset() * 60_000).toISOString().slice(0, 10);
 }
 
-export function ChecklistForm({ farms }: { farms: Farm[] }) {
+export function ChecklistForm({ farms, initialFarmId }: { farms: Farm[]; initialFarmId?: string }) {
   const router = useRouter();
   const submissionKey = useRef(crypto.randomUUID());
-  const [farmId, setFarmId] = useState(farms[0]?.id ?? "");
+  const [farmId, setFarmId] = useState(initialFarmId ?? farms[0]?.id ?? "");
   const [assessedOn, setAssessedOn] = useState(todayForInput);
   const [responses, setResponses] = useState<Record<string, DraftResponse>>(() =>
     Object.fromEntries(CHECKLIST_ITEMS.map((item) => [item.id, { note: "" }])),
@@ -85,7 +103,7 @@ export function ChecklistForm({ farms }: { farms: Farm[] }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className={styles.form} onSubmit={handleSubmit}>
       <section className={`card ${styles.detailsCard}`}>
         <div className="field">
           <label htmlFor="farm">Farm</label>
@@ -109,42 +127,69 @@ export function ChecklistForm({ farms }: { farms: Farm[] }) {
         </div>
       </section>
 
+      <div className={styles.progressRow} aria-live="polite">
+        <span>{answered.length} of {CHECKLIST_ITEMS.length} answered</span>
+        <div><i style={{ width: `${(answered.length / CHECKLIST_ITEMS.length) * 100}%` }} /></div>
+      </div>
+
       <div className={styles.items}>
-        {CHECKLIST_ITEMS.map((item, index) => (
-          <fieldset className={`card ${styles.itemCard}`} key={item.id}>
-            <legend>
-              <span>{index + 1}</span> {item.label}
-            </legend>
-            <p className="muted">{item.help}</p>
-            <div className={styles.statusGroup}>
-              {(Object.keys(STATUS_LABELS) as ChecklistStatus[]).map((status) => (
-                <label
-                  className={responses[item.id].status === status ? styles.selectedStatus : ""}
-                  key={status}
-                >
-                  <input
-                    type="radio"
-                    name={`status-${item.id}`}
-                    value={status}
-                    checked={responses[item.id].status === status}
-                    onChange={() => updateStatus(item.id, status)}
-                    required
-                  />
-                  {STATUS_LABELS[status]}
-                </label>
-              ))}
+        {CHECKLIST_SECTIONS.map((section) => (
+          <section className={styles.itemSection} key={section.title}>
+            <header className={styles.sectionHeader}>
+              <div>
+                <h2>{section.title}</h2>
+                <p>{section.description}</p>
+              </div>
+              <span>
+                {section.itemIds.filter((itemId) => responses[itemId].status).length}/{section.itemIds.length}
+              </span>
+            </header>
+            <div className={styles.sectionItems}>
+              {CHECKLIST_ITEMS.filter((item) => section.itemIds.some((itemId) => itemId === item.id)).map((item) => {
+                const index = CHECKLIST_ITEMS.findIndex((candidate) => candidate.id === item.id);
+                return (
+                  <fieldset className={`card ${styles.itemCard}`} key={item.id}>
+                    <legend>
+                      <span>{index + 1}</span> {item.label}
+                    </legend>
+                    <p className="muted">{item.help}</p>
+                    <div className={styles.statusGroup}>
+                      {(Object.keys(STATUS_LABELS) as ChecklistStatus[]).map((status) => {
+                        const selected = responses[item.id].status === status;
+                        return (
+                          <label
+                            className={`${styles.statusOption} ${styles[status]} ${selected ? styles.selectedStatus : ""}`}
+                            key={status}
+                          >
+                            <input
+                              type="radio"
+                              name={`status-${item.id}`}
+                              value={status}
+                              checked={selected}
+                              onChange={() => updateStatus(item.id, status)}
+                              required
+                            />
+                            <span className={styles.statusDot} aria-hidden="true">{selected ? "✓" : ""}</span>
+                            {STATUS_LABELS[status]}
+                          </label>
+                        );
+                      })}
+                    </div>
+                    <div className="field">
+                      <label htmlFor={`note-${item.id}`}>Optional note</label>
+                      <textarea
+                        id={`note-${item.id}`}
+                        maxLength={500}
+                        placeholder="Add a record reference or follow-up detail"
+                        value={responses[item.id].note}
+                        onChange={(event) => updateNote(item.id, event.target.value)}
+                      />
+                    </div>
+                  </fieldset>
+                );
+              })}
             </div>
-            <div className="field">
-              <label htmlFor={`note-${item.id}`}>Optional note</label>
-              <textarea
-                id={`note-${item.id}`}
-                maxLength={500}
-                placeholder="Add a record reference or follow-up detail"
-                value={responses[item.id].note}
-                onChange={(event) => updateNote(item.id, event.target.value)}
-              />
-            </div>
-          </fieldset>
+          </section>
         ))}
       </div>
 
@@ -167,7 +212,7 @@ export function ChecklistForm({ farms }: { farms: Farm[] }) {
 
       {error ? <p className={`error ${styles.formError}`} role="alert">{error}</p> : null}
       <div className={styles.saveRow}>
-        <p className="muted">This saves an internal self-assessment record.</p>
+        <p className="muted">Saved as an internal self-assessment record.</p>
         <button className="button" type="submit" disabled={submitting || farms.length === 0}>
           {submitting ? "Saving assessment…" : "Save assessment"}
         </button>
