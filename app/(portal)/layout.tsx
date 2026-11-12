@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/session";
+import { listAccessibleFarms } from "@/lib/repository";
 import { DesktopNavigation, MobileNavigation } from "./portal-nav";
+import { MobileAccountButton, SidebarAccount } from "./profile-dialog";
 import styles from "./portal.module.css";
 
 function BrandMark() {
@@ -15,6 +17,22 @@ function BrandMark() {
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
+  const farms = listAccessibleFarms(user.id);
+
+  // Ensure plain objects with Object.prototype for Client Component serialization
+  const plainUser = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  };
+
+  const plainFarms = farms.map((farm) => ({
+    id: farm.id,
+    name: farm.name,
+    type: farm.type,
+    accessRole: farm.accessRole,
+    animalCount: farm.animalCount,
+  }));
 
   return (
     <div className={styles.shell}>
@@ -24,20 +42,7 @@ export default async function PortalLayout({ children }: { children: React.React
           <span>FarmWard</span>
         </Link>
         <DesktopNavigation />
-        <div className={styles.sidebarAccount}>
-          <div className={styles.avatar} aria-hidden="true">{user.name.charAt(0)}</div>
-          <div className={styles.accountText}>
-            <strong>{user.name}</strong>
-            <span>{user.email}</span>
-          </div>
-          <form action="/api/auth/logout" method="post">
-            <button type="submit" aria-label="Sign out" title="Sign out">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M9 5H5v14h4M14 8l4 4-4 4M8 12h10" />
-              </svg>
-            </button>
-          </form>
-        </div>
+        <SidebarAccount user={plainUser} farms={plainFarms} />
       </aside>
 
       <header className={styles.mobileHeader}>
@@ -45,11 +50,7 @@ export default async function PortalLayout({ children }: { children: React.React
           <BrandMark />
           <span>FarmWard</span>
         </Link>
-        <form action="/api/auth/logout" method="post">
-          <button type="submit" aria-label={`Sign out ${user.name}`} title="Sign out">
-            <span>{user.name.charAt(0)}</span>
-          </button>
-        </form>
+        <MobileAccountButton user={plainUser} farms={plainFarms} />
       </header>
 
       <main className={styles.main}>{children}</main>
