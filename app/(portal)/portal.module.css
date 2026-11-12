@@ -268,7 +268,7 @@
     z-index: 30;
     min-height: 69px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     border: 1px solid rgba(28, 33, 30, 0.1);
     border-radius: 22px;
     padding: 7px 8px;
