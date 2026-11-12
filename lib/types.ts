@@ -5,6 +5,7 @@ export type Farm = {
   name: string;
   type: FarmType;
   accessRole: string;
+  animalCount?: number;
 };
 
 export type PortalUser = {

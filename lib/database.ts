@@ -26,7 +26,8 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS farms (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    type TEXT NOT NULL CHECK (type IN ('pig', 'poultry'))
+    type TEXT NOT NULL CHECK (type IN ('pig', 'poultry')),
+    animal_count INTEGER DEFAULT 0
   );
 
   CREATE TABLE IF NOT EXISTS farm_access (
@@ -50,18 +51,33 @@ db.exec(`
     ON assessments(farm_id, created_at DESC);
 `);
 
+try {
+  db.exec("ALTER TABLE farms ADD COLUMN animal_count INTEGER DEFAULT 0");
+} catch {
+  // Column already present in farms table
+}
+
 const insertUser = db.prepare(
   "INSERT OR IGNORE INTO users (id, name, email, password_hash) VALUES (?, ?, ?, ?)",
 );
-const insertFarm = db.prepare("INSERT OR IGNORE INTO farms (id, name, type) VALUES (?, ?, ?)");
+const insertFarm = db.prepare(
+  "INSERT OR IGNORE INTO farms (id, name, type, animal_count) VALUES (?, ?, ?, ?)",
+);
 const insertAccess = db.prepare(
   "INSERT OR IGNORE INTO farm_access (user_id, farm_id, role) VALUES (?, ?, ?)",
 );
 
 insertUser.run("user-farmer", "Sample Farmer", "farmer@example.com", hashPassword("demo123"));
 insertUser.run("user-vet", "Sample Veterinarian", "vet@example.com", hashPassword("demo123"));
-insertFarm.run("farm-pig", "Green Valley Pig Farm (Sample)", "pig");
-insertFarm.run("farm-poultry", "Sunrise Poultry Farm (Sample)", "poultry");
+insertFarm.run("farm-pig", "Green Valley Pig Farm (Sample)", "pig", 250);
+insertFarm.run("farm-poultry", "Sunrise Poultry Farm (Sample)", "poultry", 1200);
+
+const updateDefaultFarmCount = db.prepare(
+  "UPDATE farms SET animal_count = ? WHERE id = ? AND (animal_count IS NULL OR animal_count = 0)",
+);
+updateDefaultFarmCount.run(250, "farm-pig");
+updateDefaultFarmCount.run(1200, "farm-poultry");
+
 insertAccess.run("user-farmer", "farm-pig", "owner");
 insertAccess.run("user-farmer", "farm-poultry", "manager");
 insertAccess.run("user-vet", "farm-poultry", "veterinarian");
