@@ -20,26 +20,104 @@ export function findUserById(id: string): PortalUser | null {
   const row = db.prepare("SELECT id, name, email FROM users WHERE id = ?").get(id) as
     | PortalUser
     | undefined;
-  return row ?? null;
+  if (!row) return null;
+  return { id: row.id, name: row.name, email: row.email };
 }
 
 export function listAccessibleFarms(userId: string): Farm[] {
-  const rows = db
-    .prepare(
-      `SELECT farms.id, farms.name, farms.type, farm_access.role AS accessRole
-       FROM farms
-       INNER JOIN farm_access ON farm_access.farm_id = farms.id
-       WHERE farm_access.user_id = ?
-       ORDER BY farms.name`,
-    )
-    .all(userId) as Farm[];
+  type FarmRow = {
+    id: string;
+    name: string;
+    type: FarmType;
+    accessRole: string;
+    animalCount?: number | null;
+  };
 
-  return rows.map((farm) => ({
-    id: farm.id,
-    name: farm.name,
-    type: farm.type,
-    accessRole: farm.accessRole,
-  }));
+  let rows: FarmRow[] = [];
+  try {
+    rows = db
+      .prepare(
+        `SELECT farms.id, farms.name, farms.type, farms.animal_count AS animalCount, farm_access.role AS accessRole
+         FROM farms
+         INNER JOIN farm_access ON farm_access.farm_id = farms.id
+         WHERE farm_access.user_id = ?
+         ORDER BY farms.name`,
+      )
+      .all(userId) as FarmRow[];
+  } catch {
+    rows = db
+      .prepare(
+        `SELECT farms.id, farms.name, farms.type, farm_access.role AS accessRole
+         FROM farms
+         INNER JOIN farm_access ON farm_access.farm_id = farms.id
+         WHERE farm_access.user_id = ?
+         ORDER BY farms.name`,
+      )
+      .all(userId) as FarmRow[];
+  }
+
+  return rows.map((farm) => {
+    const defaultCount = farm.type === "pig" ? 250 : 1200;
+    const animalCount =
+      typeof farm.animalCount === "number" && farm.animalCount > 0
+        ? farm.animalCount
+        : defaultCount;
+
+    return {
+      id: farm.id,
+      name: farm.name,
+      type: farm.type,
+      accessRole: farm.accessRole,
+      animalCount,
+    };
+  });
+}
+
+export function updateFarmAnimalCount(userId: string, farmId: string, count: number): boolean {
+  if (!canAccessFarm(userId, farmId)) return false;
+  const result = db
+    .prepare("UPDATE farms SET animal_count = ? WHERE id = ?")
+    .run(Math.max(0, Math.floor(count)), farmId);
+  return result.changes > 0;
+}
+
+export function updateUserProfile(userId: string, name: string, email: string): boolean {
+  try {
+    const result = db
+      .prepare("UPDATE users SET name = ?, email = ? WHERE id = ?")
+      .run(name.trim(), email.trim().toLowerCase(), userId);
+    return result.changes > 0;
+  } catch {
+    return false;
+  }
+}
+
+export function updateFarmDetails(
+  userId: string,
+  farmId: string,
+  data: { name?: string; type?: FarmType; animalCount?: number },
+): boolean {
+  if (!canAccessFarm(userId, farmId)) return false;
+  try {
+    const current = db
+      .prepare("SELECT name, type, animal_count FROM farms WHERE id = ?")
+      .get(farmId) as { name: string; type: FarmType; animal_count?: number } | undefined;
+    if (!current) return false;
+
+    const newName = data.name?.trim() || current.name;
+    const newType = data.type === "pig" || data.type === "poultry" ? data.type : current.type;
+    const newCount =
+      typeof data.animalCount === "number"
+        ? Math.max(0, Math.floor(data.animalCount))
+        : (current.animal_count ?? 0);
+
+    const result = db
+      .prepare("UPDATE farms SET name = ?, type = ?, animal_count = ? WHERE id = ?")
+      .run(newName, newType, newCount, farmId);
+    return result.changes > 0;
+  } catch {
+    return false;
+  }
 }
 
 export function canAccessFarm(userId: string, farmId: string) {
