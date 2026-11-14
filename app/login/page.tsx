@@ -17,14 +17,15 @@ export default async function LoginPage() {
               <path d="M13.5 27c2.7-4.2 6.2-6.7 10.3-8.1" />
             </svg>
           </span>
-          <strong>BioFarm Portal</strong>
+          <strong>FarmWard</strong>
         </div>
         <p className={styles.eyebrow}>Digital Farm Management Portal</p>
         <h1>Welcome back</h1>
         <p className="muted">Sign in to complete and review farm biosecurity self-assessments.</p>
         <div className={styles.sampleNotice}>
-          <strong>Sample account</strong>
-          <span>farmer@example.com · demo123</span>
+          <strong>Sample accounts (demonstration only)</strong>
+          <span>Farmer: farmer@example.com · demo123</span>
+          <span>Veterinarian: vet@example.com · demo123</span>
         </div>
         <LoginForm />
       </section>
