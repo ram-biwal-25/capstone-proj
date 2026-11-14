@@ -135,7 +135,15 @@ export function ChecklistForm({ farms, initialFarmId }: { farms: Farm[]; initial
         </div>
       </section>
 
-      <div className={styles.progressRow} aria-live="polite">
+      <div
+        className={styles.progressRow}
+        role="progressbar"
+        aria-valuenow={answered.length}
+        aria-valuemin={0}
+        aria-valuemax={CHECKLIST_ITEMS.length}
+        aria-label="Checklist completion progress"
+        aria-live="polite"
+      >
         <span>{answered.length} of {CHECKLIST_ITEMS.length} answered</span>
         <div><i style={{ width: `${(answered.length / CHECKLIST_ITEMS.length) * 100}%` }} /></div>
       </div>

@@ -3,7 +3,7 @@
   --surface: #fffefa;
   --surface-soft: #fbfaf6;
   --text: #1c211e;
-  --muted: #69716c;
+  --muted: #555e58;
   --primary: #1d5138;
   --primary-dark: #133f2a;
   --sage: #e0e9dc;
@@ -14,6 +14,25 @@
   --success-bg: #e6f1e7;
   --radius: 20px;
   --shadow: 0 12px 35px rgba(37, 49, 41, 0.055);
+}
+
+.skip-link {
+  position: absolute;
+  top: -120px;
+  left: 16px;
+  z-index: 1000;
+  padding: 10px 18px;
+  color: white;
+  background: var(--primary);
+  border-radius: 10px;
+  font-weight: 750;
+  text-decoration: none;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  transition: top 160ms ease;
+}
+
+.skip-link:focus {
+  top: 16px;
 }
 
 * {

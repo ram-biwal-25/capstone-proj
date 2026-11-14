@@ -37,16 +37,19 @@ export function LoginForm() {
   }
 
   return (
-    <form className="login-form" onSubmit={handleSubmit}>
+    <form className="login-form" onSubmit={handleSubmit} noValidate>
       <div className="field">
-        <label htmlFor="email">Email</label>
+        <label htmlFor="email">Email address</label>
         <input
           id="email"
           name="email"
           type="email"
           autoComplete="username"
+          placeholder="name@example.com"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? "login-error" : undefined}
           required
         />
       </div>
@@ -57,12 +60,19 @@ export function LoginForm() {
           name="password"
           type="password"
           autoComplete="current-password"
+          placeholder="Enter your password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? "login-error" : undefined}
           required
         />
       </div>
-      {error ? <p className="error" role="alert">{error}</p> : null}
+      {error ? (
+        <p className="error" id="login-error" role="alert">
+          {error}
+        </p>
+      ) : null}
       <button className="button" type="submit" disabled={submitting}>
         {submitting ? "Signing in…" : "Sign in"}
       </button>
