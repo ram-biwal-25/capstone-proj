@@ -73,3 +73,4 @@ The browser sends the selected farm, date, answers, notes, and a one-time submis
 - `lib/database.ts` — SQLite schema and clearly labeled sample seed data
 - `lib/repository.ts` — authorized farm and assessment queries
 - `lib/session.ts` — signed, HTTP-only login session
+- 
