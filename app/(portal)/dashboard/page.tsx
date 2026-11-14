@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { calculateCompletion } from "@/lib/checklist";
+import { calculateCompletion, classifyRisk } from "@/lib/checklist";
+import { summarizeFarmAssessments } from "@/lib/reporting";
 import { listAccessibleFarms, listAssessments } from "@/lib/repository";
 import { requireUser } from "@/lib/session";
 import styles from "./page.module.css";
@@ -14,7 +15,8 @@ function formatDate(value: string) {
 export default async function DashboardPage() {
   const user = await requireUser();
   const farms = listAccessibleFarms(user.id);
-  const recentAssessments = listAssessments(user.id).slice(0, 3);
+  const allAssessments = listAssessments(user.id);
+  const recentAssessments = allAssessments.slice(0, 4);
 
   return (
     <section className={styles.page}>
@@ -49,31 +51,62 @@ export default async function DashboardPage() {
       </div>
 
       <div className={styles.farmGrid}>
-        {farms.map((farm) => (
-          <article className={`card ${styles.farmCard}`} key={farm.id}>
-            <div className={styles.farmImage}>
-              <Image
-                className={farm.type === "poultry" ? styles.poultryImage : undefined}
-                alt={`${farm.type === "pig" ? "Pigs" : "Chickens"} at ${farm.name}`}
-                fill
-                priority
-                sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 520px"
-                src={farm.type === "pig" ? "/images/sample-pig-farm.jpg" : "/images/sample-poultry-farm.jpg"}
-              />
-              <span>{farm.type === "pig" ? "Pig farm" : "Poultry farm"}</span>
-            </div>
-            <div className={styles.farmDetails}>
-              <div>
-                <h3>{farm.name}</h3>
-                <p><span>{farm.accessRole}</span> access</p>
+        {farms.map((farm) => {
+          const farmSummary = summarizeFarmAssessments(farm.id, allAssessments);
+          return (
+            <article className={`card ${styles.farmCard}`} key={farm.id}>
+              <div className={styles.farmImage}>
+                <Image
+                  className={farm.type === "poultry" ? styles.poultryImage : undefined}
+                  alt={`${farm.type === "pig" ? "Pigs" : "Chickens"} at ${farm.name}`}
+                  fill
+                  priority
+                  sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 520px"
+                  src={farm.type === "pig" ? "/images/sample-pig-farm.jpg" : "/images/sample-poultry-farm.jpg"}
+                />
+                <span>{farm.type === "pig" ? "Pig farm" : "Poultry farm"}</span>
               </div>
-              <Link className={styles.farmAction} href={`/checklist?farm=${farm.id}`}>
-                <span>Start checklist</span>
-                <span aria-hidden="true">→</span>
-              </Link>
-            </div>
-          </article>
-        ))}
+              <div className={styles.farmDetails}>
+                <div>
+                  <h3>{farm.name}</h3>
+                  <p><span>{farm.accessRole}</span> access · {farmSummary.totalAssessments} {farmSummary.totalAssessments === 1 ? "record" : "records"}</p>
+                  <div className={styles.farmStatusStrip}>
+                    {farmSummary.latestRiskLevel ? (
+                      <span className={`${styles.farmRiskBadge} ${styles[`risk_${farmSummary.latestRiskLevel}`]}`}>
+                        {farmSummary.latestRiskLabel} risk
+                      </span>
+                    ) : (
+                      <span className={styles.farmUnassessed}>No assessments yet</span>
+                    )}
+                    {farmSummary.latestCompletion !== null ? (
+                      <span className={styles.farmCompletion}>
+                        {farmSummary.latestCompletion}% complete
+                      </span>
+                    ) : null}
+                    {farmSummary.trend === "improving" ? (
+                      <span className={styles.trendImproving} title="Improving trend compared to previous assessment">↑ Improving</span>
+                    ) : farmSummary.trend === "declining" ? (
+                      <span className={styles.trendDeclining} title="Lower completion compared to previous assessment">↓ Needs review</span>
+                    ) : farmSummary.trend === "stable" ? (
+                      <span className={styles.trendStable} title="Consistent with previous assessment">→ Stable</span>
+                    ) : null}
+                  </div>
+                </div>
+                <div className={styles.farmActionsGroup}>
+                  {farmSummary.totalAssessments > 0 ? (
+                    <Link className={styles.farmHistoryLink} href={`/history?farm=${farm.id}`}>
+                      View records
+                    </Link>
+                  ) : null}
+                  <Link className={styles.farmAction} href={`/checklist?farm=${farm.id}`}>
+                    <span>Start checklist</span>
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       <div className={styles.sectionHeading}>
@@ -97,6 +130,7 @@ export default async function DashboardPage() {
         <div className={`card ${styles.recentHistory}`}>
           {recentAssessments.map((assessment) => {
             const summary = calculateCompletion(assessment.responses);
+            const risk = classifyRisk(summary);
             return (
               <Link href={`/history/${assessment.id}`} key={assessment.id}>
                 <span className={styles.historyFarmIcon} aria-hidden="true">
@@ -105,6 +139,9 @@ export default async function DashboardPage() {
                 <span className={styles.historyFarm}>
                   <strong>{assessment.farmName}</strong>
                   <small>{formatDate(assessment.assessedOn)} · {assessment.createdBy}</small>
+                </span>
+                <span className={`${styles.historyRisk} ${styles[`risk_${risk.level}`]}`}>
+                  {risk.label}
                 </span>
                 <span className={summary.followUp > 0 ? styles.historyFollowUp : styles.historyClear}>
                   {summary.followUp} follow-up

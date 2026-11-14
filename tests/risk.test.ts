@@ -1,68 +1,84 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { calculateRiskScore, classifyRisk, RISK_FACTORS, type RiskFactorId } from "../lib/risk";
+import {
+  classifyRisk,
+  getSpeciesGuidance,
+  PIG_GUIDANCE,
+  POULTRY_GUIDANCE,
+  CHECKLIST_ITEMS,
+} from "../lib/checklist";
 
-test("biosecurity factors have total weight of 100%", () => {
-  const totalWeight = RISK_FACTORS.reduce((sum, f) => sum + f.weight, 0);
-  assert.equal(totalWeight, 100);
+// ---------------------------------------------------------------------------
+// classifyRisk
+// ---------------------------------------------------------------------------
+
+test("classifyRisk: all done → low risk", () => {
+  const result = classifyRisk({ done: 6, followUp: 0, notApplicable: 0, applicable: 6, percentage: 100 });
+  assert.equal(result.level, "low");
 });
 
-test("single factor example: quarantine with risk rating 1 contributes 20", () => {
-  const ratings: Record<RiskFactorId, number> = {
-    visitor_management: 0,
-    quarantine: 1, // 20 * 1 = 20
-    cleaning_disinfection: 0,
-    feed_water_hygiene: 0,
-    waste_disposal: 0,
-    pest_control: 0,
-    vaccination_health: 0,
-  };
-
-  const result = calculateRiskScore(ratings);
-  assert.equal(result.weightedContributions.quarantine, 20);
-  assert.equal(result.score, 20);
-  assert.equal(result.classification, "Low");
+test("classifyRisk: one follow-up → moderate risk", () => {
+  const result = classifyRisk({ done: 5, followUp: 1, notApplicable: 0, applicable: 6, percentage: 83 });
+  assert.equal(result.level, "moderate");
 });
 
-test("all zero ratings produces 0 score and Low risk", () => {
-  const ratings: Record<RiskFactorId, number> = {
-    visitor_management: 0,
-    quarantine: 0,
-    cleaning_disinfection: 0,
-    feed_water_hygiene: 0,
-    waste_disposal: 0,
-    pest_control: 0,
-    vaccination_health: 0,
-  };
-
-  const result = calculateRiskScore(ratings);
-  assert.equal(result.score, 0);
-  assert.equal(result.classification, "Low");
+test("classifyRisk: two follow-ups → high risk", () => {
+  const result = classifyRisk({ done: 4, followUp: 2, notApplicable: 0, applicable: 6, percentage: 67 });
+  assert.equal(result.level, "high");
 });
 
-test("all maximum ratings produces 100 score and Critical risk", () => {
-  const ratings: Record<RiskFactorId, number> = {
-    visitor_management: 1,
-    quarantine: 1,
-    cleaning_disinfection: 1,
-    feed_water_hygiene: 1,
-    waste_disposal: 1,
-    pest_control: 1,
-    vaccination_health: 1,
-  };
-
-  const result = calculateRiskScore(ratings);
-  assert.equal(result.score, 100);
-  assert.equal(result.classification, "Critical");
+test("classifyRisk: ≥50% follow-up ratio → critical risk", () => {
+  // 3 of 6 applicable → 50% follow-up
+  const result = classifyRisk({ done: 3, followUp: 3, notApplicable: 0, applicable: 6, percentage: 50 });
+  assert.equal(result.level, "critical");
 });
 
-test("risk classification thresholds match specifications", () => {
-  assert.equal(classifyRisk(0), "Low");
-  assert.equal(classifyRisk(25), "Low");
-  assert.equal(classifyRisk(26), "Moderate");
-  assert.equal(classifyRisk(50), "Moderate");
-  assert.equal(classifyRisk(51), "High");
-  assert.equal(classifyRisk(75), "High");
-  assert.equal(classifyRisk(76), "Critical");
-  assert.equal(classifyRisk(100), "Critical");
+test("classifyRisk: all not_applicable → not assessed (low)", () => {
+  const result = classifyRisk({ done: 0, followUp: 0, notApplicable: 6, applicable: 0, percentage: null });
+  assert.equal(result.level, "low");
+  assert.ok(result.label.includes("Not assessed") || result.label === "Not assessed");
+});
+
+test("classifyRisk: returns at least one corrective action", () => {
+  const levels = [
+    { done: 6, followUp: 0, notApplicable: 0, applicable: 6, percentage: 100 },
+    { done: 5, followUp: 1, notApplicable: 0, applicable: 6, percentage: 83 },
+    { done: 4, followUp: 2, notApplicable: 0, applicable: 6, percentage: 67 },
+    { done: 2, followUp: 4, notApplicable: 0, applicable: 6, percentage: 33 },
+  ];
+  for (const summary of levels) {
+    const r = classifyRisk(summary);
+    assert.ok(r.actions.length > 0, `${r.level} risk should include corrective actions`);
+    assert.ok(r.description.length > 0, `${r.level} risk should include a description`);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// getSpeciesGuidance
+// ---------------------------------------------------------------------------
+
+test("getSpeciesGuidance: returns pig guidance for pig farms", () => {
+  const guidance = getSpeciesGuidance("pig");
+  assert.deepEqual(guidance, PIG_GUIDANCE);
+  assert.ok(guidance.length > 0);
+});
+
+test("getSpeciesGuidance: returns poultry guidance for poultry farms", () => {
+  const guidance = getSpeciesGuidance("poultry");
+  assert.deepEqual(guidance, POULTRY_GUIDANCE);
+  assert.ok(guidance.length > 0);
+});
+
+test("getSpeciesGuidance: pig and poultry guidance differ", () => {
+  const pig = getSpeciesGuidance("pig");
+  const poultry = getSpeciesGuidance("poultry");
+  assert.notDeepEqual(pig, poultry);
+});
+
+test("getSpeciesGuidance: guidance items reference valid checklist item IDs", () => {
+  const validIds = new Set<string>(CHECKLIST_ITEMS.map((i) => i.id));
+
+  for (const { itemId } of [...PIG_GUIDANCE, ...POULTRY_GUIDANCE]) {
+    assert.ok(validIds.has(itemId), `guidance itemId "${itemId}" must match a checklist item`);
+  }
 });

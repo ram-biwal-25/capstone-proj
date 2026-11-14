@@ -72,6 +72,83 @@
   font-weight: 720;
 }
 
+.riskBadge {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.risk_low {
+  color: #17552b;
+  background: var(--success-bg);
+  border: 1px solid #b7dcbe;
+}
+
+.risk_moderate {
+  color: #74460b;
+  background: var(--warning-bg);
+  border: 1px solid #e8cd98;
+}
+
+.risk_high {
+  color: #8c2a2a;
+  background: #fdf0ed;
+  border: 1px solid #f3c2ba;
+}
+
+.risk_critical {
+  color: #7a1515;
+  background: #fce8e6;
+  border: 1px solid #e89b93;
+}
+
+.riskBanner {
+  margin: 18px 0;
+  padding: 18px 22px;
+  border-left: 4px solid var(--primary);
+}
+
+.riskBanner h3 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.riskBanner p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.actionList {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.actionList strong {
+  font-size: 0.82rem;
+  color: var(--text);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.actionList ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 5px;
+  color: #3f4742;
+  font-size: 0.82rem;
+}
+
 .naMessage {
   border: 1px solid #ead5a9;
   border-radius: 13px;

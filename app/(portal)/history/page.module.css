@@ -34,6 +34,97 @@
   text-transform: uppercase;
 }
 
+.filterCard {
+  margin-bottom: 20px;
+  padding: 16px 20px;
+}
+
+.filterForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.filterField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 130px;
+  flex: 1 1 140px;
+}
+
+.filterField label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 780;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filterField select {
+  min-height: 38px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 0.84rem;
+}
+
+.filterActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.filterActions button {
+  min-height: 38px;
+  padding: 6px 15px;
+  font-size: 0.82rem;
+  border-radius: 10px;
+}
+
+.filterReset {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-decoration: underline;
+  padding: 6px 4px;
+}
+
+.riskBadge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 0.69rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.risk_low {
+  color: #17552b;
+  background: var(--success-bg);
+  border: 1px solid #b7dcbe;
+}
+
+.risk_moderate {
+  color: #74460b;
+  background: var(--warning-bg);
+  border: 1px solid #e8cd98;
+}
+
+.risk_high {
+  color: #8c2a2a;
+  background: #fdf0ed;
+  border: 1px solid #f3c2ba;
+}
+
+.risk_critical {
+  color: #7a1515;
+  background: #fce8e6;
+  border: 1px solid #e89b93;
+}
+
 .tableShell {
   overflow: hidden;
 }
@@ -288,6 +379,7 @@
 
   .tableShell td:nth-child(2) {
     grid-column: 1;
+    grid-row: 2;
     color: var(--muted);
     font-size: 0.74rem;
   }
@@ -303,9 +395,14 @@
     grid-row: 3;
   }
 
+  .tableShell td:nth-child(5) {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
   .tableShell td:last-child {
     grid-column: 2;
-    grid-row: 3;
+    grid-row: 4;
     justify-content: flex-end;
   }
 
