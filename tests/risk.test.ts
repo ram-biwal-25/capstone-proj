@@ -76,7 +76,7 @@ test("getSpeciesGuidance: pig and poultry guidance differ", () => {
 });
 
 test("getSpeciesGuidance: guidance items reference valid checklist item IDs", () => {
-  const validIds = new Set(CHECKLIST_ITEMS.map((i) => i.id));
+  const validIds = new Set<string>(CHECKLIST_ITEMS.map((i) => i.id));
 
   for (const { itemId } of [...PIG_GUIDANCE, ...POULTRY_GUIDANCE]) {
     assert.ok(validIds.has(itemId), `guidance itemId "${itemId}" must match a checklist item`);
