@@ -2,7 +2,7 @@
 
 import { FormEvent, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { calculateCompletion, CHECKLIST_ITEMS, STATUS_LABELS } from "@/lib/checklist";
+import { calculateCompletion, CHECKLIST_ITEMS, classifyRisk, getSpeciesGuidance, STATUS_LABELS } from "@/lib/checklist";
 import type { ChecklistStatus, Farm } from "@/lib/types";
 import styles from "./page.module.css";
 
@@ -47,6 +47,14 @@ export function ChecklistForm({ farms, initialFarmId }: { farms: Farm[]; initial
     () => calculateCompletion(answered as { status: ChecklistStatus }[]),
     [answered],
   );
+
+  const selectedFarm = farms.find((f) => f.id === farmId) ?? farms[0];
+  const farmType = selectedFarm?.type ?? "pig";
+  const speciesGuidance = useMemo(
+    () => new Map(getSpeciesGuidance(farmType).map((g) => [g.itemId, g.note])),
+    [farmType],
+  );
+  const risk = useMemo(() => classifyRisk(summary), [summary]);
 
   function updateStatus(itemId: string, status: ChecklistStatus) {
     setResponses((current) => ({
@@ -153,6 +161,12 @@ export function ChecklistForm({ farms, initialFarmId }: { farms: Farm[]; initial
                       <span>{index + 1}</span> {item.label}
                     </legend>
                     <p className="muted">{item.help}</p>
+                    {speciesGuidance.has(item.id) ? (
+                      <p className={styles.speciesHint}>
+                        <strong>{farmType === "pig" ? "Pig farm: " : "Poultry farm: "}</strong>
+                        {speciesGuidance.get(item.id)}
+                      </p>
+                    ) : null}
                     <div className={styles.statusGroup}>
                       {(Object.keys(STATUS_LABELS) as ChecklistStatus[]).map((status) => {
                         const selected = responses[item.id].status === status;
@@ -202,6 +216,14 @@ export function ChecklistForm({ farms, initialFarmId }: { farms: Farm[]; initial
           {summary.percentage === null && answered.length > 0 ? (
             <p>Not calculated because all answered items are Not applicable.</p>
           ) : null}
+          {answered.length > 0 ? (
+            <div className={styles.riskRow}>
+              <span className={`${styles.riskBadge} ${styles[`risk_${risk.level}`]}`}>
+                {risk.label} risk
+              </span>
+              <small className={styles.riskDescription}>{risk.description}</small>
+            </div>
+          ) : null}
         </div>
         <dl>
           <div><dt>Done</dt><dd>{summary.done}</dd></div>
@@ -209,6 +231,17 @@ export function ChecklistForm({ farms, initialFarmId }: { farms: Farm[]; initial
           <div><dt>Not applicable</dt><dd>{summary.notApplicable}</dd></div>
         </dl>
       </aside>
+
+      {answered.length === CHECKLIST_ITEMS.length && risk.actions.length > 0 ? (
+        <div className={`card ${styles.recommendationsCard}`}>
+          <h3>Recommended corrective actions</h3>
+          <ul>
+            {risk.actions.map((action, idx) => (
+              <li key={idx}>{action}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       {error ? <p className={`error ${styles.formError}`} role="alert">{error}</p> : null}
       <div className={styles.saveRow}>
