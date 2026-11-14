@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./portal.module.css";
 
-type IconName = "overview" | "checklist" | "history" | "about";
+type IconName = "overview" | "checklist" | "history" | "risk" | "about";
 
 const links: { href: string; label: string; icon: IconName }[] = [
   { href: "/dashboard", label: "Overview", icon: "overview" },
   { href: "/checklist", label: "New checklist", icon: "checklist" },
   { href: "/history", label: "Assessment history", icon: "history" },
+  { href: "/risk", label: "Risk Estimation", icon: "risk" },
   { href: "/about", label: "About", icon: "about" },
 ];
 
@@ -25,6 +26,15 @@ function NavIcon({ name }: { name: IconName }) {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 4v16M4 12h16" />
+      </svg>
+    );
+  }
+  if (name === "risk") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <line x1="12" y1="9" x2="12" y2="13" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
       </svg>
     );
   }
@@ -78,7 +88,17 @@ export function MobileNavigation() {
           key={link.href}
         >
           <NavIcon name={link.icon} />
-          <span>{link.icon === "checklist" ? "Checklist" : link.icon === "history" ? "History" : link.icon === "about" ? "About" : "Overview"}</span>
+          <span>
+            {link.icon === "checklist"
+              ? "Checklist"
+              : link.icon === "history"
+                ? "History"
+                : link.icon === "risk"
+                  ? "Risk"
+                  : link.icon === "about"
+                    ? "About"
+                    : "Overview"}
+          </span>
         </Link>
       ))}
     </nav>
