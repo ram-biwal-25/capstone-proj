@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { calculateCompletion, STATUS_LABELS } from "@/lib/checklist";
+import { calculateCompletion, classifyRisk, STATUS_LABELS } from "@/lib/checklist";
 import { findAssessmentById } from "@/lib/repository";
 import { requireUser } from "@/lib/session";
 import styles from "./page.module.css";
@@ -24,6 +24,7 @@ export default async function AssessmentDetailPage({
   if (!assessment) notFound();
 
   const summary = calculateCompletion(assessment.responses);
+  const risk = classifyRisk(summary);
   const saved = (await searchParams).saved === "1";
 
   return (
@@ -41,7 +42,25 @@ export default async function AssessmentDetailPage({
         <div className={styles.score}>
           <strong>{summary.percentage === null ? "N/A" : `${summary.percentage}%`}</strong>
           <span>Checklist completion</span>
+          <span className={`${styles.riskBadge} ${styles[`risk_${risk.level}`]}`}>
+            {risk.label} risk
+          </span>
         </div>
+      </div>
+
+      <div className={`card ${styles.riskBanner}`}>
+        <h3>Biosecurity risk classification: {risk.label}</h3>
+        <p>{risk.description}</p>
+        {risk.actions.length > 0 ? (
+          <div className={styles.actionList}>
+            <strong>Recommended corrective actions:</strong>
+            <ul>
+              {risk.actions.map((action, idx) => (
+                <li key={idx}>{action}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
       </div>
 
       {summary.percentage === null ? (
