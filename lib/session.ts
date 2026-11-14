@@ -7,7 +7,16 @@ import { findUserById } from "./repository";
 
 const COOKIE_NAME = "farm_portal_session";
 const SESSION_LENGTH_SECONDS = 60 * 60 * 12;
+
 const secret = process.env.AUTH_SECRET ?? "development-only-change-me";
+
+// Warn loudly if running in production with the insecure fallback secret.
+if (process.env.NODE_ENV === "production" && !process.env.AUTH_SECRET) {
+  console.error(
+    "[SECURITY] AUTH_SECRET is not set. All session tokens are insecure. " +
+      "Set AUTH_SECRET to a long random value in your production environment.",
+  );
+}
 
 function signature(value: string) {
   return createHmac("sha256", secret).update(value).digest("base64url");

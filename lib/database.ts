@@ -49,6 +49,14 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_assessments_farm_created
     ON assessments(farm_id, created_at DESC);
+
+  -- Accelerate farm-access lookups (canAccessFarm is called on every assessment submit).
+  CREATE INDEX IF NOT EXISTS idx_farm_access_user
+    ON farm_access(user_id);
+
+  -- Accelerate submission-key idempotency lookups.
+  CREATE INDEX IF NOT EXISTS idx_assessments_submission_key
+    ON assessments(submission_key);
 `);
 
 try {

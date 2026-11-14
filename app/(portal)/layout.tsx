@@ -36,6 +36,9 @@ export default async function PortalLayout({ children }: { children: React.React
 
   return (
     <div className={styles.shell}>
+      <a className="skip-link" href="#main-content">
+        Skip to main content
+      </a>
       <aside className={styles.sidebar}>
         <Link className={styles.brand} href="/dashboard">
           <BrandMark />
@@ -53,7 +56,7 @@ export default async function PortalLayout({ children }: { children: React.React
         <MobileAccountButton user={plainUser} farms={plainFarms} />
       </header>
 
-      <main className={styles.main}>{children}</main>
+      <main id="main-content" tabIndex={-1} className={styles.main}>{children}</main>
       <MobileNavigation />
     </div>
   );
