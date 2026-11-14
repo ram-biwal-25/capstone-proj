@@ -74,7 +74,7 @@ function mapAssessment(row: AssessmentRow): Assessment {
 }
 
 const assessmentSelect = `
-  SELECT assessments.id,
+  SELECT DISTINCT assessments.id,
          assessments.farm_id AS farmId,
          farms.name AS farmName,
          farms.type AS farmType,
