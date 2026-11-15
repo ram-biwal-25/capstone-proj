@@ -1,20 +1,54 @@
 import "server-only";
 
-import { mkdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { hashPassword } from "./password";
 
-const databasePath = process.env.DATABASE_PATH ?? path.join(process.cwd(), "data", "farm-portal.sqlite");
+function resolveDatabasePath(): string {
+  if (process.env.DATABASE_PATH) {
+    return process.env.DATABASE_PATH;
+  }
 
-mkdirSync(path.dirname(databasePath), { recursive: true });
+  // On Vercel or read-only serverless environments, store in /tmp
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    const tmpDb = path.join(os.tmpdir(), "farm-portal.sqlite");
+    const bundledDb = path.join(process.cwd(), "data", "farm-portal.sqlite");
+
+    if (existsSync(bundledDb) && !existsSync(tmpDb)) {
+      try {
+        copyFileSync(bundledDb, tmpDb);
+      } catch {
+        // Fallback to fresh creation in /tmp
+      }
+    }
+    return tmpDb;
+  }
+
+  // Local development fallback
+  const localDir = path.join(process.cwd(), "data");
+  try {
+    mkdirSync(localDir, { recursive: true });
+    return path.join(localDir, "farm-portal.sqlite");
+  } catch {
+    return path.join(os.tmpdir(), "farm-portal.sqlite");
+  }
+}
+
+const databasePath = resolveDatabasePath();
+
+try {
+  mkdirSync(path.dirname(databasePath), { recursive: true });
+} catch {
+  // Directory might already exist or be read-only
+}
 
 export const db = new DatabaseSync(databasePath);
 
 db.exec(`
   PRAGMA busy_timeout = 5000;
   PRAGMA foreign_keys = ON;
-  PRAGMA journal_mode = WAL;
 
   CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
@@ -58,6 +92,16 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_assessments_submission_key
     ON assessments(submission_key);
 `);
+
+try {
+  db.exec("PRAGMA journal_mode = WAL;");
+} catch {
+  try {
+    db.exec("PRAGMA journal_mode = DELETE;");
+  } catch {
+    // Keep default journal mode
+  }
+}
 
 try {
   db.exec("ALTER TABLE farms ADD COLUMN animal_count INTEGER DEFAULT 0");
