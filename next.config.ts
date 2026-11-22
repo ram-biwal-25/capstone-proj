@@ -21,6 +21,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  serverExternalPackages: ["node:sqlite"],
   async headers() {
     return [
       {
